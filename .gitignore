@@ -1,0 +1,5 @@
+*.bayes
+/*.layout
+*.o
+*.so
+

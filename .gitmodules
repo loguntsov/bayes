@@ -1,0 +1,3 @@
+[submodule "lib/libstemmer"]
+	path = lib/libstemmer
+	url = https://github.com/zvelo/libstemmer.git

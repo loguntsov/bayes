@@ -1,0 +1,274 @@
+# depslib dependency file v1.0
+1360169741 source:/home/begemot/c++/example/main.cpp
+	<iostream>
+	<string.h>
+	<locale.h>
+	"libstemmer.h"
+	<unicode/unistr.h>
+	<unicode/regex.h>
+	<vector>
+	<map>
+	<stdlib.h>
+	<assert.h>
+	<sstream>
+	"BayesClassifier.h"
+	<fstream>
+
+1359805698 /home/begemot/c++/example/lib/libstemmer/include/libstemmer.h
+
+1349467539 /usr/include/string.h
+	<features.h>
+	<stddef.h>
+	<xlocale.h>
+	<bits/string.h>
+	<bits/string2.h>
+	<bits/string3.h>
+
+1349467519 /usr/include/features.h
+	<bits/predefs.h>
+	<sys/cdefs.h>
+	<gnu/stubs.h>
+
+1349467520 /usr/include/xlocale.h
+
+1327519441 /usr/include/unicode/unistr.h
+	"unicode/utypes.h"
+	"unicode/rep.h"
+	"unicode/std_string.h"
+	"unicode/stringpiece.h"
+	"unicode/bytestream.h"
+
+1327519441 /usr/include/unicode/utypes.h
+	"unicode/umachine.h"
+	"unicode/utf.h"
+	"unicode/uversion.h"
+	"unicode/uconfig.h"
+	"float.h"
+	"unicode/udraft.h"
+	"unicode/udeprctd.h"
+	"unicode/uobslete.h"
+	"unicode/uintrnal.h"
+	"unicode/usystem.h"
+
+1327519441 /usr/include/unicode/umachine.h
+	"unicode/ppalmos.h"
+	"unicode/platform.h"
+	"unicode/pwin32.h"
+	"unicode/ptypes.h"
+	<stddef.h>
+	"unicode/urename.h"
+
+1327519440 /usr/include/unicode/ppalmos.h
+	<inttypes.h>
+
+1349467536 /usr/include/inttypes.h
+	<features.h>
+	<stdint.h>
+	<stddef.h>
+
+1349467536 /usr/include/stdint.h
+	<features.h>
+	<bits/wchar.h>
+	<bits/wordsize.h>
+
+1327519440 /usr/include/unicode/platform.h
+
+1327519440 /usr/include/unicode/pwin32.h
+	<inttypes.h>
+
+1327519440 /usr/include/unicode/ptypes.h
+	<sys/types.h>
+	"unicode/platform.h"
+	<features.h>
+	<inttypes.h>
+
+1327519441 /usr/include/unicode/urename.h
+	"unicode/umachine.h"
+	"unicode/uvernum.h"
+
+1327519441 /usr/include/unicode/uvernum.h
+
+1327519441 /usr/include/unicode/utf.h
+	"unicode/utypes.h"
+	"unicode/utf8.h"
+	"unicode/utf16.h"
+	"unicode/utf_old.h"
+
+1327519441 /usr/include/unicode/utf8.h
+	"unicode/utf.h"
+
+1327519441 /usr/include/unicode/utf16.h
+	"unicode/utf.h"
+
+1327519441 /usr/include/unicode/utf_old.h
+	"unicode/utf.h"
+
+1327519441 /usr/include/unicode/uversion.h
+	"unicode/umachine.h"
+	"unicode/uvernum.h"
+
+1327519441 /usr/include/unicode/uconfig.h
+	"uconfig_local.h"
+
+1327519441 /usr/include/unicode/udraft.h
+
+1327519441 /usr/include/unicode/udeprctd.h
+
+1327519441 /usr/include/unicode/uobslete.h
+
+1327519441 /usr/include/unicode/uintrnal.h
+
+1327519441 /usr/include/unicode/usystem.h
+
+1327519440 /usr/include/unicode/rep.h
+	"unicode/uobject.h"
+
+1327519441 /usr/include/unicode/uobject.h
+	"unicode/utypes.h"
+
+1327519440 /usr/include/unicode/std_string.h
+	"unicode/utypes.h"
+	<string>
+
+1327519440 /usr/include/unicode/stringpiece.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/std_string.h"
+
+1327519440 /usr/include/unicode/bytestream.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/std_string.h"
+
+1349467520 /usr/include/locale.h
+	<features.h>
+	<stddef.h>
+	<bits/locale.h>
+	<xlocale.h>
+
+1327519440 /usr/include/unicode/brkiter.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/unistr.h"
+	"unicode/chariter.h"
+	"unicode/locid.h"
+	"unicode/ubrk.h"
+	"unicode/strenum.h"
+	"unicode/utext.h"
+	"unicode/umisc.h"
+
+1327519440 /usr/include/unicode/chariter.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/unistr.h"
+
+1327519440 /usr/include/unicode/locid.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/unistr.h"
+	"unicode/putil.h"
+	"unicode/uloc.h"
+	"unicode/strenum.h"
+
+1327519440 /usr/include/unicode/putil.h
+	"unicode/utypes.h"
+
+1327519441 /usr/include/unicode/uloc.h
+	"unicode/utypes.h"
+	"unicode/uenum.h"
+
+1327519441 /usr/include/unicode/uenum.h
+	"unicode/utypes.h"
+	"unicode/localpointer.h"
+	"unicode/strenum.h"
+
+1327519440 /usr/include/unicode/localpointer.h
+	"unicode/utypes.h"
+
+1327519440 /usr/include/unicode/strenum.h
+	"unicode/uobject.h"
+	"unicode/unistr.h"
+
+1327519441 /usr/include/unicode/ubrk.h
+	"unicode/utypes.h"
+	"unicode/uloc.h"
+	"unicode/utext.h"
+	"unicode/localpointer.h"
+	"unicode/parseerr.h"
+
+1327519441 /usr/include/unicode/utext.h
+	"unicode/utypes.h"
+	"unicode/uchar.h"
+	"unicode/localpointer.h"
+	"unicode/rep.h"
+	"unicode/unistr.h"
+	"unicode/chariter.h"
+
+1327519441 /usr/include/unicode/uchar.h
+	"unicode/utypes.h"
+
+1327519440 /usr/include/unicode/parseerr.h
+	"unicode/utypes.h"
+
+1327519441 /usr/include/unicode/umisc.h
+	"unicode/utypes.h"
+
+1327519441 /usr/include/unicode/regex.h
+	"unicode/utypes.h"
+	"unicode/uobject.h"
+	"unicode/unistr.h"
+	"unicode/utext.h"
+	"unicode/parseerr.h"
+	"unicode/uregex.h"
+
+1327519441 /usr/include/unicode/uregex.h
+	"unicode/utext.h"
+	"unicode/utypes.h"
+	"unicode/localpointer.h"
+	"unicode/parseerr.h"
+
+1349467536 /usr/include/stdlib.h
+	<features.h>
+	<stddef.h>
+	<bits/waitflags.h>
+	<bits/waitstatus.h>
+	<xlocale.h>
+	<sys/types.h>
+	<alloca.h>
+	<bits/stdlib.h>
+	<bits/stdlib-ldbl.h>
+
+1349467536 /usr/include/alloca.h
+	<features.h>
+	<stddef.h>
+
+1349467532 /usr/include/assert.h
+	<features.h>
+
+1360169536 /home/begemot/c++/example/include/BayesClassifier.h
+	<stdint.h>
+	<map>
+	<string>
+	<ostream>
+	<istream>
+
+1360169548 source:/home/begemot/c++/example/src/BayesClassifier.cpp
+	<math.h>
+	"BayesClassifier.h"
+	<fstream>
+	<iostream>
+
+1349467534 /usr/include/math.h
+	<features.h>
+	<bits/huge_val.h>
+	<bits/huge_valf.h>
+	<bits/huge_vall.h>
+	<bits/inf.h>
+	<bits/nan.h>
+	<bits/mathdef.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls.h>
+	<bits/mathinline.h>
+	<bits/math-finite.h>
+
