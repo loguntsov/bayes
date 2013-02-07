@@ -15,6 +15,9 @@
 #include "BayesClassifier.h"
 
 #include <fstream>
+#include <math.h>
+#include <algorithm>
+#include <set>
 
 using namespace std;
 
@@ -38,13 +41,30 @@ typedef struct {
 	} WordInfo;
 typedef map <Hash32, WordInfo> WordList;
 
+bool isStopWord(string word) {
+	static set <string> stop_words;
+	if (stop_words.size() == 0) {
+		static string words[] = {"the","an","from","to","by","against","about","of","above","below","since","with","after","before","as",
+		"из","на","под", "за","из-за","над","без","для","про","через",
+		""};
+		unsigned int i = 0;
+		string *w;
+		while( *(w = &words[i]) != "")  {
+			stop_words.insert(*w);
+			i++;
+		}
+	}
+	return stop_words.find(word) != stop_words.end();
+}
+
+
 int learn(string file) {
     sb_stemmer* stemmer_ru = sb_stemmer_new("russian","UTF_8");
     sb_stemmer* stemmer_en = sb_stemmer_new("english","UTF_8");
 
     UErrorCode status = U_ZERO_ERROR;
-    RegexMatcher *matcher = new RegexMatcher("([a-zа-я])+", 0, status);
-    RegexMatcher *header = new RegexMatcher("^----class ([\\d]+) -----$", 0, status);
+    RegexMatcher matcher("([a-zа-я])+", 0, status);
+    RegexMatcher header("^----class ([\\d]+) -----$", 0, status);
 
     WordList words_all;
     ClassifierList classifier;
@@ -54,10 +74,10 @@ int learn(string file) {
         string buf;
         std::getline(cin, buf);
         UnicodeString ucs = UnicodeString::fromUTF8(buf.c_str());
-		header->reset(ucs);
-        if (header->find()) {
+		header.reset(ucs);
+        if (header.find()) {
         	string str;
-        	header->group(1,status).toUTF8String(str);
+        	header.group(1,status).toUTF8String(str);
         	int cl = atoi(str.c_str());
         	if (classifier.find(cl) == classifier.end()) {
         		WordsStat stat;
@@ -73,10 +93,14 @@ int learn(string file) {
 
         Hash32 hash;
 
-        matcher->reset(ucs);
-        while (matcher->find()) {
+        matcher.reset(ucs);
+        while (matcher.find()) {
             string str, str0;
-            matcher->group(status).toUTF8String(str);
+            UnicodeString uWord = matcher.group(status);
+            if (uWord.length() < 2) continue;
+            uWord.toUTF8String(str);
+
+			if (isStopWord(str)) continue;
 
             const char *s = str.c_str();
             const unsigned int n = str.length();
@@ -101,9 +125,6 @@ int learn(string file) {
 
         }
     }
-
-    delete matcher;
-    delete header;
 
     sb_stemmer_delete(stemmer_ru);
     sb_stemmer_delete(stemmer_en);
@@ -167,7 +188,11 @@ int classifier(string file) {
 			matcher.reset(ucs);
 			while (matcher.find()) {
 				string str, str0;
-				matcher.group(status).toUTF8String(str);
+				UnicodeString uWord = matcher.group(status);
+				if (uWord.length() < 2) continue;
+				uWord.toUTF8String(str);
+
+				if (isStopWord(str)) continue;
 
 				const char *s = str.c_str();
 				const unsigned int n = str.length();
@@ -182,9 +207,22 @@ int classifier(string file) {
 			}
 		}
 
+		ClassifierP p;
+
 		ClassifierP answer = bayes.classify(words);
+		//float k = (std::max_element(answer.begin(), answer.end()))->second;
+
+		for(ClassifierP::const_iterator i = answer.begin(); i != answer.end(); i ++) {
+			float sum = 0;
+			for(ClassifierP::const_iterator j = answer.begin(); j != answer.end(); j++ ) {
+				sum += exp( j->second - i->second );
+			}
+			p[i->first] = 1/ sum;
+		}
+
+
 		for(ClassifierP::const_iterator item = answer.begin(); item != answer.end(); item++) {
-			cout << item->first << ' ' << item->second << endl;
+			cout << item->first << ' ' << item->second << ' ' << p[item->first] << endl;
 		}
 		cout << '\0';
     }

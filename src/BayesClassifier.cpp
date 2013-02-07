@@ -31,6 +31,8 @@ void BayesClassifier::setStats(ClassifierList list) {
 
 void BayesClassifier::setStats(ClassifierList list, WordsStat all) {
 	unsigned int total = 0;
+	unsigned int wordsCount = all.size();
+
 	for(WordsStat::const_iterator item = all.begin(); item != all.end(); item++) {
 		total+=item->second;
 	}
@@ -38,14 +40,19 @@ void BayesClassifier::setStats(ClassifierList list, WordsStat all) {
 	ClassifierListP categoryP;
 
 	for(ClassifierList::const_iterator category = list.begin(); category != list.end(); category++) {
+	    unsigned int catTotal = 0;
 		for(WordsStat::const_iterator p = category->second.begin(); p != category->second.end(); p++) {
-			categoryP[category->first][p->first] = log((float) p->second / all[p->first]);
+			catTotal += p->second;
 		}
+		for(WordsStat::const_iterator p = category->second.begin(); p != category->second.end(); p++) {
+			categoryP[category->first][p->first] = log((float) (p->second+1 ) / (catTotal + wordsCount ));
+		}
+		this->pNoWordFound[category->first] = log(1.0 / (catTotal + wordsCount));
 	}
 	WordP allP;
 
 	for(WordsStat::const_iterator item = all.begin(); item != all.end(); item++) {
-		allP[item->first] = log((float) item->second / total);
+		allP[item->first] = log((float) item->second) - log((float) total);
 	}
 
 	this->categoryP = categoryP;
@@ -57,10 +64,11 @@ ClassifierP BayesClassifier::classify(WordsStat stat) {
 	for(ClassifierListP::const_iterator category = this->categoryP.begin(); category != this->categoryP.end(); category++) {
 		float estimation = 0;
 		for(WordsStat::const_iterator word = stat.begin(); word != stat.end(); word++) {
-			if (word->second == 0) continue;
-			ClassifierP::const_iterator it = category->second.find(word->first);
+			WordP::const_iterator it = category->second.find(word->first);
 			if (it != category->second.end()) {
-				estimation += it->second - this->allP[word->first];
+				estimation += ((float) it->second) * word->second;
+			} else {
+				estimation += this->pNoWordFound[category->first] * word->second;
 			}
 		}
 		answer[category->first] = estimation;
@@ -76,6 +84,10 @@ void BayesClassifier::saveToStream(ostream &stream) {
 	stream << "XXXXX" << endl;
 
 	stream << this->categoryP.size() << endl;
+
+	for(ClassifierP::const_iterator item = this->pNoWordFound.begin(); item != this->pNoWordFound.end(); item ++) {
+		stream << item->first << " " << item->second << endl;
+	}
 
 	for(ClassifierListP::const_iterator categoryIt = this->categoryP.begin(); categoryIt != this->categoryP.end(); categoryIt++) {
 		stream << categoryIt->first << " " << categoryIt->second.size() << endl;
@@ -105,6 +117,15 @@ void BayesClassifier::loadFromStream(istream &stream) {
 
 	ClassifierListP::size_type categoryPsize = 0;
 	stream >> categoryPsize;
+
+	this->pNoWordFound.clear();
+
+	for(unsigned int i = 0; i< categoryPsize; i++) {
+		CategoryId id;
+		float value;
+		stream >> id >> value;
+		this->pNoWordFound[id] = value;
+	}
 
 	for(unsigned int cnt_category = 0; cnt_category < categoryPsize; cnt_category++) {
 		CategoryId id;

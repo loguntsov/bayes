@@ -33,6 +33,7 @@ class BayesClassifier {
 	protected:
 		WordP allP;
 		ClassifierListP categoryP;
+		ClassifierP pNoWordFound;
 	private:
 };
 
