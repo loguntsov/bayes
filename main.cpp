@@ -224,7 +224,8 @@ int classifier(string file) {
 		for(ClassifierP::const_iterator item = answer.begin(); item != answer.end(); item++) {
 			cout << item->first << ' ' << item->second << ' ' << p[item->first] << endl;
 		}
-		cout << '\0';
+		cout << endl;
+		words.clear();
     }
 
     sb_stemmer_delete(stemmer_ru);
@@ -242,7 +243,7 @@ int main(int argc, char* argv[]) {
 
 	if (argc != 3) {
 		cout <<
-"Классификатор текста на основе классификатора Байеса \n"
+"Классификатор текста на основе классификатора Байеса (ver 0.01) \n"
 "bayes [режим_работы] [имя_файла_конфигурации] \n"
 "Режимы работы: \n"
 " - L - обучение (после обучения данные будут записаны в файл конфигурации) \n"
