@@ -272,7 +272,7 @@
 	<bits/mathinline.h>
 	<bits/math-finite.h>
 
-1360171903 source:/home/begemot/c++/bayes/main.cpp
+1360764978 source:/home/begemot/c++/bayes/main.cpp
 	<iostream>
 	<string.h>
 	<locale.h>
@@ -286,6 +286,9 @@
 	<sstream>
 	"BayesClassifier.h"
 	<fstream>
+	<math.h>
+	<algorithm>
+	<set>
 
 1359805698 /home/begemot/c++/bayes/lib/libstemmer/include/libstemmer.h
 

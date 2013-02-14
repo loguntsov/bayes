@@ -43,7 +43,10 @@
 		</Compiler>
 		<Linker>
 			<Add library="lib/libstemmer/libstemmer.o" />
-			<Add library="/usr/lib/*.so" />
+			<Add library="/usr/lib/libicutu.so" />
+			<Add library="/usr/lib/libicuio.so" />
+			<Add library="/usr/lib/libicuuc.so" />
+			<Add library="/usr/lib/libicui18n.so" />
 		</Linker>
 		<Unit filename="include/BayesClassifier.h" />
 		<Unit filename="main.cpp" />
