@@ -49,8 +49,13 @@
 			<Add library="/usr/lib/libicui18n.so" />
 		</Linker>
 		<Unit filename="include/BayesClassifier.h" />
+		<Unit filename="include/LexerStem.h" />
+		<Unit filename="include/lexer.h" />
+		<Unit filename="include/types.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BayesClassifier.cpp" />
+		<Unit filename="src/LexerStem.cpp" />
+		<Unit filename="src/lexer.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

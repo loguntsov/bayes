@@ -2,9 +2,6 @@
 #include <iostream>
 #include <string.h>
 #include <locale.h>
-#include "libstemmer.h"
-#include <unicode/unistr.h>
-#include <unicode/regex.h>
 
 #include <vector>
 #include <map>
@@ -12,28 +9,16 @@
 #include <assert.h>
 #include <sstream>
 
-#include "BayesClassifier.h"
-
 #include <fstream>
 #include <math.h>
 #include <algorithm>
 #include <set>
+#include <memory>
+
+#include "BayesClassifier.h"
+#include "LexerStem.h"
 
 using namespace std;
-
-uint32_t jenkins_one_at_a_time_hash(const char *key, size_t len) {
-    uint32_t hash, i;
-    for(hash = i = 0; i < len; ++i)
-    {
-        hash += key[i];
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
 
 typedef struct {
 		unsigned int counter;
@@ -41,26 +26,8 @@ typedef struct {
 	} WordInfo;
 typedef map <Hash32, WordInfo> WordList;
 
-bool isStopWord(string word) {
-	static set <string> stop_words;
-	if (stop_words.size() == 0) {
-		static string words[] = {"the","an","from","to","by","against","about","of","above","below","since","with","after","before","as",
-		"из","на","под", "за","из-за","над","без","для","про","через",
-		""};
-		unsigned int i = 0;
-		string *w;
-		while( *(w = &words[i]) != "")  {
-			stop_words.insert(*w);
-			i++;
-		}
-	}
-	return stop_words.find(word) != stop_words.end();
-}
-
 
 int learn(string file) {
-    sb_stemmer* stemmer_ru = sb_stemmer_new("russian","UTF_8");
-    sb_stemmer* stemmer_en = sb_stemmer_new("english","UTF_8");
 
     UErrorCode status = U_ZERO_ERROR;
     RegexMatcher matcher("([a-zа-я])+", 0, status);
@@ -69,6 +36,8 @@ int learn(string file) {
     WordList words_all;
     ClassifierList classifier;
     ClassifierList::iterator words = classifier.end();
+
+    std::auto_ptr <lexer> Lexer(new LexerStem());
 
     while (!cin.eof()) {
         string buf;
@@ -91,27 +60,15 @@ int learn(string file) {
 
         ucs.toLower();
 
-        Hash32 hash;
+        lemma_list lemmas = Lexer->parse(ucs);
 
-        matcher.reset(ucs);
-        while (matcher.find()) {
-            string str, str0;
-            UnicodeString uWord = matcher.group(status);
-            if (uWord.length() < 2) continue;
-            uWord.toUTF8String(str);
-
-			if (isStopWord(str)) continue;
-
-            const char *s = str.c_str();
-            const unsigned int n = str.length();
-            const char *stem = (char * ) sb_stemmer_stem(stemmer_ru, sb_stemmer_stem(stemmer_en, (sb_symbol *) s,n), n);
-            hash = jenkins_one_at_a_time_hash(stem, strlen(stem));
-
+        for(lemma_list::const_iterator item = lemmas.begin(); item != lemmas.end(); item++) {
+            lemma Lemma = (*item);
+            Hash32 hash = Lemma.first;
 			if (words_all.find(hash) == words_all.end()) {
 				WordInfo data;
 				data.counter = 1;
-				data.word = string(stem, strlen(stem));
-
+				data.word = Lemma.second;
 				words_all[hash]= data;
 				words->second[hash] = 1;
 			} else {
@@ -122,12 +79,8 @@ int learn(string file) {
 					words->second[hash]++;
 				}
 			}
-
         }
     }
-
-    sb_stemmer_delete(stemmer_ru);
-    sb_stemmer_delete(stemmer_en);
 
 	for(WordList::const_iterator item = words_all.begin(); item != words_all.end(); item++) {
 		cout << item->first << " " << item->second.word << " " << item->second.counter << endl;
@@ -156,14 +109,12 @@ int classifier(string file) {
 	bayes.loadFromStream(ifs);
 	ifs.close();
 
-    sb_stemmer* stemmer_ru = sb_stemmer_new("russian","UTF_8");
-    sb_stemmer* stemmer_en = sb_stemmer_new("english","UTF_8");
-
     UErrorCode status = U_ZERO_ERROR;
     RegexMatcher matcher("([a-zа-я])+", 0, status);
 
     WordsStat words;
     ClassifierList classifier;
+    std::auto_ptr <lexer> Lexer(new LexerStem());
 
     while (!cin.eof()) {
 
@@ -183,22 +134,10 @@ int classifier(string file) {
 
 			ucs.toLower();
 
-			Hash32 hash;
+			lemma_list lemmas = Lexer->parse(ucs);
 
-			matcher.reset(ucs);
-			while (matcher.find()) {
-				string str, str0;
-				UnicodeString uWord = matcher.group(status);
-				if (uWord.length() < 2) continue;
-				uWord.toUTF8String(str);
-
-				if (isStopWord(str)) continue;
-
-				const char *s = str.c_str();
-				const unsigned int n = str.length();
-				const char *stem = (char * ) sb_stemmer_stem(stemmer_ru, sb_stemmer_stem(stemmer_en, (sb_symbol *) s,n), n);
-				hash = jenkins_one_at_a_time_hash(stem, strlen(stem));
-
+            for(lemma_list::const_iterator item = lemmas.begin(); item != lemmas.end(); item++) {
+                Hash32 hash = (*item).first;
 				if (words.find(hash) == words.end()) {
 					words[hash] = 1;
 				} else {
@@ -228,18 +167,17 @@ int classifier(string file) {
 		words.clear();
     }
 
-    sb_stemmer_delete(stemmer_ru);
-    sb_stemmer_delete(stemmer_en);
-
 	return 0;
 
 }
 
 int main(int argc, char* argv[]) {
-
     if (!setlocale(LC_ALL, "ru_RU.utf8"))
-        if (!setlocale(LC_ALL, "russian"))
+        if (!setlocale(LC_ALL, "russian")) {
+            cerr << "Не могу установить русскую локаль: ru_RU.utf8";
             return 1;
+        }
+
 
 	if (argc != 3) {
 		cout <<

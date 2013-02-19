@@ -272,36 +272,56 @@
 	<bits/mathinline.h>
 	<bits/math-finite.h>
 
-1360764978 source:/home/begemot/c++/bayes/main.cpp
+1361273983 source:/home/begemot/c++/bayes/main.cpp
 	<iostream>
 	<string.h>
 	<locale.h>
-	"libstemmer.h"
-	<unicode/unistr.h>
-	<unicode/regex.h>
 	<vector>
 	<map>
 	<stdlib.h>
 	<assert.h>
 	<sstream>
-	"BayesClassifier.h"
 	<fstream>
 	<math.h>
 	<algorithm>
 	<set>
+	<memory>
+	"BayesClassifier.h"
+	"LexerStem.h"
 
 1359805698 /home/begemot/c++/bayes/lib/libstemmer/include/libstemmer.h
 
-1360228775 /home/begemot/c++/bayes/include/BayesClassifier.h
-	<stdint.h>
-	<map>
+1361269537 /home/begemot/c++/bayes/include/BayesClassifier.h
 	<string>
 	<ostream>
 	<istream>
+	"types.h"
 
 1360229275 source:/home/begemot/c++/bayes/src/BayesClassifier.cpp
 	<math.h>
 	"BayesClassifier.h"
 	<fstream>
 	<iostream>
+
+1361272193 /home/begemot/c++/bayes/include/types.h
+	<map>
+	<stdint.h>
+
+1361273128 source:/home/begemot/c++/bayes/src/lexer.cpp
+	"lexer.h"
+
+1361273116 /home/begemot/c++/bayes/include/lexer.h
+	"types.h"
+	<vector>
+	<string.h>
+	<unicode/unistr.h>
+
+1361273086 source:/home/begemot/c++/bayes/src/LexerStem.cpp
+	"LexerStem.h"
+	<set>
+
+1361272971 /home/begemot/c++/bayes/include/LexerStem.h
+	"lexer.h"
+	"libstemmer.h"
+	<unicode/regex.h>
 
