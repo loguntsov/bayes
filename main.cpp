@@ -45,6 +45,10 @@ int learn(string file) {
         UnicodeString ucs = UnicodeString::fromUTF8(buf.c_str());
 		header.reset(ucs);
         if (header.find()) {
+            if (words != classifier.end()) {
+                Lexer->parse_end();
+                Lexer->word_stat(words->second);
+            }
         	string str;
         	header.group(1,status).toUTF8String(str);
         	int cl = atoi(str.c_str());
@@ -53,6 +57,7 @@ int learn(string file) {
         		classifier[cl] = stat;
         	}
 			words = classifier.find(cl);
+			Lexer->parse_begin();
 			continue;
         }
 
@@ -60,27 +65,13 @@ int learn(string file) {
 
         ucs.toLower();
 
-        lemma_list lemmas = Lexer->parse(ucs);
-
-        for(lemma_list::const_iterator item = lemmas.begin(); item != lemmas.end(); item++) {
-            lemma Lemma = (*item);
-            Hash32 hash = Lemma.first;
-			if (words_all.find(hash) == words_all.end()) {
-				WordInfo data;
-				data.counter = 1;
-				data.word = Lemma.second;
-				words_all[hash]= data;
-				words->second[hash] = 1;
-			} else {
-				words_all[hash].counter++;
-				if (words->second.find(hash) == words->second.end()) {
-					words->second[hash] = 1;
-				} else {
-					words->second[hash]++;
-				}
-			}
-        }
+        Lexer->parse(ucs);
+        Lexer->word_stat(words->second);
     }
+
+    Lexer->parse_end();
+    Lexer->word_stat(words->second);
+
 
 	for(WordList::const_iterator item = words_all.begin(); item != words_all.end(); item++) {
 		cout << item->first << " " << item->second.word << " " << item->second.counter << endl;
@@ -112,9 +103,9 @@ int classifier(string file) {
     UErrorCode status = U_ZERO_ERROR;
     RegexMatcher matcher("([a-zа-я])+", 0, status);
 
-    WordsStat words;
     ClassifierList classifier;
     std::auto_ptr <lexer> Lexer(new LexerStem());
+    WordsStat words;
 
     while (!cin.eof()) {
 
@@ -126,6 +117,8 @@ int classifier(string file) {
 			text << sym;
 		} while (sym != 0 && cin.good());
 
+        Lexer->parse_begin();
+
 		while (!text.eof()) {
 			string buf;
 
@@ -134,17 +127,12 @@ int classifier(string file) {
 
 			ucs.toLower();
 
-			lemma_list lemmas = Lexer->parse(ucs);
+			Lexer->parse(ucs);
+            Lexer->word_stat(words);
+        }
 
-            for(lemma_list::const_iterator item = lemmas.begin(); item != lemmas.end(); item++) {
-                Hash32 hash = (*item).first;
-				if (words.find(hash) == words.end()) {
-					words[hash] = 1;
-				} else {
-					words[hash]++;
-				}
-			}
-		}
+        Lexer->parse_end();
+        Lexer->word_stat(words);
 
 		ClassifierP p;
 
@@ -181,7 +169,7 @@ int main(int argc, char* argv[]) {
 
 	if (argc != 3) {
 		cout <<
-"Классификатор текста на основе классификатора Байеса (ver 0.01) \n"
+"Классификатор текста на основе классификатора Байеса (ver 0.02) \n"
 "bayes [режим_работы] [имя_файла_конфигурации] \n"
 "Режимы работы: \n"
 " - L - обучение (после обучения данные будут записаны в файл конфигурации) \n"

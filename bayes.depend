@@ -272,7 +272,7 @@
 	<bits/mathinline.h>
 	<bits/math-finite.h>
 
-1361273983 source:/home/begemot/c++/bayes/main.cpp
+1361356356 source:/home/begemot/c++/bayes/main.cpp
 	<iostream>
 	<string.h>
 	<locale.h>
@@ -307,20 +307,20 @@
 	<map>
 	<stdint.h>
 
-1361273128 source:/home/begemot/c++/bayes/src/lexer.cpp
+1361356039 source:/home/begemot/c++/bayes/src/lexer.cpp
 	"lexer.h"
 
-1361273116 /home/begemot/c++/bayes/include/lexer.h
+1361357102 /home/begemot/c++/bayes/include/lexer.h
 	"types.h"
-	<vector>
+	<queue>
 	<string.h>
 	<unicode/unistr.h>
 
-1361273086 source:/home/begemot/c++/bayes/src/LexerStem.cpp
+1361355669 source:/home/begemot/c++/bayes/src/LexerStem.cpp
 	"LexerStem.h"
 	<set>
 
-1361272971 /home/begemot/c++/bayes/include/LexerStem.h
+1361354311 /home/begemot/c++/bayes/include/LexerStem.h
 	"lexer.h"
 	"libstemmer.h"
 	<unicode/regex.h>

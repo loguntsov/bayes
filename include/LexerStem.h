@@ -9,7 +9,7 @@ class LexerStem : public lexer {
     public:
         LexerStem();
         virtual ~LexerStem();
-        virtual lemma_list parse(const UnicodeString str);
+        virtual void parse(const UnicodeString str);
     protected:
         bool is_stop_word(const std::string word) const;
         sb_stemmer* stemmer_ru;

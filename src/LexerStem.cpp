@@ -16,8 +16,7 @@ LexerStem::~LexerStem() {
     delete this->matcher;
 }
 
-lemma_list LexerStem::parse(const UnicodeString str) {
-    lemma_list lemmas;
+void LexerStem::parse(const UnicodeString str) {
 
     this->matcher->reset(str);
     while (this->matcher->find()) {
@@ -33,12 +32,11 @@ lemma_list LexerStem::parse(const UnicodeString str) {
         const unsigned int n = str.length();
         const char *stem = (char * ) sb_stemmer_stem(stemmer_ru, sb_stemmer_stem(stemmer_en, (sb_symbol *) s,n), n);
         lemma Lemma;
-        Lemma.first = lexer::hash(stem, strlen(stem));
-        Lemma.second = std::string(stem, strlen(stem));
-        lemmas.push_back(Lemma);
+        Lemma.hash = lexer::hash(stem, strlen(stem));
+        Lemma.weight = 1;
+        Lemma.name = std::string(stem, strlen(stem));
+        this->lemmas.push(Lemma);
     }
-
-    return lemmas;
 }
 
 bool LexerStem::is_stop_word(const string word) const {

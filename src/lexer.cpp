@@ -7,6 +7,37 @@ lexer::lexer() {
 lexer::~lexer() {
     //dtor
 }
+
+void lexer::parse_begin() {
+    while(!this->lemmas.empty()) this->lemmas.pop();
+    return;
+}
+
+void lexer::parse_end() {
+    return;
+}
+
+lemma lexer::get_next_lemma() {
+    lemma l = this->lemmas.front();
+    this->lemmas.pop();
+    return l;
+}
+
+bool lexer::lemma_eof() const {
+    return this->lemmas.empty();
+}
+
+void lexer::word_stat(WordsStat &stats) {
+    while(!this->lemmas.empty()) {
+        lemma L = this->get_next_lemma();
+        if (stats.find(L.hash) == stats.end()) {
+            stats[L.hash] = L.weight;
+        } else {
+            stats[L.hash]+= L.weight;
+        }
+    }
+}
+
 /**
     Хеш функция Дженкинса
 */
