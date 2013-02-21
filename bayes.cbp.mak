@@ -30,7 +30,7 @@ DEP_DEBUG =
 OUT_DEBUG = bin/Debug/bayes
 
 INC_RELEASE =  $(INC)
-CFLAGS_RELEASE =  $(CFLAGS) -O2
+CFLAGS_RELEASE =  $(CFLAGS) -O2 -Wall
 RESINC_RELEASE =  $(RESINC)
 RCFLAGS_RELEASE =  $(RCFLAGS)
 LIBDIR_RELEASE =  $(LIBDIR)
@@ -40,9 +40,9 @@ OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
 OUT_RELEASE = bin/Release/bayes
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/BayesClassifier.o $(OBJDIR_DEBUG)/src/LexerStem.o $(OBJDIR_DEBUG)/src/lexer.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/BayesClassifier.o $(OBJDIR_DEBUG)/src/LexerMyStem.o $(OBJDIR_DEBUG)/src/LexerStem.o $(OBJDIR_DEBUG)/src/child.o $(OBJDIR_DEBUG)/src/lexer.o
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/BayesClassifier.o $(OBJDIR_RELEASE)/src/LexerStem.o $(OBJDIR_RELEASE)/src/lexer.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/BayesClassifier.o $(OBJDIR_RELEASE)/src/LexerMyStem.o $(OBJDIR_RELEASE)/src/LexerStem.o $(OBJDIR_RELEASE)/src/child.o $(OBJDIR_RELEASE)/src/lexer.o
 
 all: debug release
 
@@ -66,8 +66,14 @@ $(OBJDIR_DEBUG)/main.o: main.cpp
 $(OBJDIR_DEBUG)/src/BayesClassifier.o: src/BayesClassifier.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/BayesClassifier.cpp -o $(OBJDIR_DEBUG)/src/BayesClassifier.o
 
+$(OBJDIR_DEBUG)/src/LexerMyStem.o: src/LexerMyStem.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/LexerMyStem.cpp -o $(OBJDIR_DEBUG)/src/LexerMyStem.o
+
 $(OBJDIR_DEBUG)/src/LexerStem.o: src/LexerStem.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/LexerStem.cpp -o $(OBJDIR_DEBUG)/src/LexerStem.o
+
+$(OBJDIR_DEBUG)/src/child.o: src/child.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/child.cpp -o $(OBJDIR_DEBUG)/src/child.o
 
 $(OBJDIR_DEBUG)/src/lexer.o: src/lexer.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/lexer.cpp -o $(OBJDIR_DEBUG)/src/lexer.o
@@ -96,8 +102,14 @@ $(OBJDIR_RELEASE)/main.o: main.cpp
 $(OBJDIR_RELEASE)/src/BayesClassifier.o: src/BayesClassifier.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/BayesClassifier.cpp -o $(OBJDIR_RELEASE)/src/BayesClassifier.o
 
+$(OBJDIR_RELEASE)/src/LexerMyStem.o: src/LexerMyStem.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/LexerMyStem.cpp -o $(OBJDIR_RELEASE)/src/LexerMyStem.o
+
 $(OBJDIR_RELEASE)/src/LexerStem.o: src/LexerStem.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/LexerStem.cpp -o $(OBJDIR_RELEASE)/src/LexerStem.o
+
+$(OBJDIR_RELEASE)/src/child.o: src/child.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/child.cpp -o $(OBJDIR_RELEASE)/src/child.o
 
 $(OBJDIR_RELEASE)/src/lexer.o: src/lexer.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/lexer.cpp -o $(OBJDIR_RELEASE)/src/lexer.o

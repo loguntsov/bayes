@@ -28,6 +28,7 @@ class lexer {
     protected:
         lemma_queue lemmas;
         static uint32_t hash(const char *key, size_t len);
+        lemma create_lemma(std::string str, int weight);
     private:
 };
 

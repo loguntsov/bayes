@@ -31,11 +31,7 @@ void LexerStem::parse(const UnicodeString str) {
         const char *s = str.c_str();
         const unsigned int n = str.length();
         const char *stem = (char * ) sb_stemmer_stem(stemmer_ru, sb_stemmer_stem(stemmer_en, (sb_symbol *) s,n), n);
-        lemma Lemma;
-        Lemma.hash = lexer::hash(stem, strlen(stem));
-        Lemma.weight = 1;
-        Lemma.name = std::string(stem, strlen(stem));
-        this->lemmas.push(Lemma);
+        this->lemmas.push(this->create_lemma(string(stem), 1));
     }
 }
 

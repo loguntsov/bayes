@@ -1,5 +1,7 @@
 #include "lexer.h"
 
+using namespace std;
+
 lexer::lexer() {
     //ctor
 }
@@ -36,6 +38,16 @@ void lexer::word_stat(WordsStat &stats) {
             stats[L.hash]+= L.weight;
         }
     }
+}
+
+lemma lexer::create_lemma(string s, int weight) {
+    lemma lem;
+    const char *str = s.c_str();
+    const int n = strlen(str);
+    lem.hash = lexer::hash(str, n);
+    lem.weight = weight;
+    lem.name = std::string(str, n);
+    return lem;
 }
 
 /**

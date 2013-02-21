@@ -17,6 +17,7 @@
 
 #include "BayesClassifier.h"
 #include "LexerStem.h"
+#include "LexerMyStem.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ typedef struct {
 typedef map <Hash32, WordInfo> WordList;
 
 
-int learn(string file) {
+int learn(string file, lexer * Lexer) {
 
     UErrorCode status = U_ZERO_ERROR;
     RegexMatcher matcher("([a-zа-я])+", 0, status);
@@ -36,8 +37,6 @@ int learn(string file) {
     WordList words_all;
     ClassifierList classifier;
     ClassifierList::iterator words = classifier.end();
-
-    std::auto_ptr <lexer> Lexer(new LexerStem());
 
     while (!cin.eof()) {
         string buf;
@@ -64,7 +63,6 @@ int learn(string file) {
         assert(words != classifier.end());
 
         ucs.toLower();
-
         Lexer->parse(ucs);
         Lexer->word_stat(words->second);
     }
@@ -72,6 +70,12 @@ int learn(string file) {
     Lexer->parse_end();
     Lexer->word_stat(words->second);
 
+	BayesClassifier bayes;
+	bayes.setStats(classifier);
+
+	ofstream ofs(file.c_str());
+	bayes.saveToStream(ofs);
+	ofs.close();
 
 	for(WordList::const_iterator item = words_all.begin(); item != words_all.end(); item++) {
 		cout << item->first << " " << item->second.word << " " << item->second.counter << endl;
@@ -83,17 +87,10 @@ int learn(string file) {
 			cout << stats->first << "\t" << stats->second << endl;
 	}
 
-	BayesClassifier bayes;
-	bayes.setStats(classifier);
-
-	ofstream ofs(file.c_str());
-	bayes.saveToStream(ofs);
-	ofs.close();
-
 	return 0;
 }
 
-int classifier(string file) {
+int classifier(string file, lexer * Lexer) {
 
 	BayesClassifier bayes;
 	ifstream ifs(file.c_str());
@@ -104,7 +101,6 @@ int classifier(string file) {
     RegexMatcher matcher("([a-zа-я])+", 0, status);
 
     ClassifierList classifier;
-    std::auto_ptr <lexer> Lexer(new LexerStem());
     WordsStat words;
 
     while (!cin.eof()) {
@@ -167,29 +163,57 @@ int main(int argc, char* argv[]) {
         }
 
 
-	if (argc != 3) {
+	if (argc < 3) {
 		cout <<
 "Классификатор текста на основе классификатора Байеса (ver 0.02) \n"
-"bayes [режим_работы] [имя_файла_конфигурации] \n"
-"Режимы работы: \n"
+"bayes [режим_работы] [имя_файла_конфигурации] [тип_лексера] \n"
+"РЕЖИМЫ РАБОТЫ: \n"
 " - L - обучение (после обучения данные будут записаны в файл конфигурации) \n"
 "\t На stdin подается набор (много штук) -----CLASSIFICATOR {uint_классификатора} --------\\n + \n"
 "\t текст для классификации. Где uint_классификатора -- класс к которому должен принадлежать текст во время классификации \n"
 "\t После закрытия stdin классификатор формирует файл конфигурации. \n"
 " - C - классификация. На stdin подаем классифицируемый текст с \\0 в конце. На stdout получаем численные оценки принадлежности c \\0 в конце. \n"
+"\n"
+"ТИПЫ ЛЕКСЕРОВ: \n"
+"\t stem (по-умолчанию) - выделение слов, стемминг для русского и английского. \n"
+"\t mystem - работа ведется через программу mystem (Яндекс) "
 "\n\n Логунцов С.В. 2013 г. mailto: loguntsov@gmail.com \n";
 		return 0;
 	}
 
 	string file(argv[2]);
+	string mode(argv[1]);
+
+    lexer * Lexer = NULL;
+
+	if (argc > 3) {
+        string lexer(argv[3]);
+        if (lexer == "mystem") {
+            Lexer = new LexerMyStem();
+        } else
+        if (lexer == "stem") {
+            Lexer = new LexerStem();
+        }
+        if (Lexer == NULL) {
+            cerr << "Неизвестный тип лексера. Доступные варианты: mystem, stem";
+            return 1;
+        }
+	}
+
+    if (Lexer == NULL) {
+        Lexer = new LexerStem();
+    }
+
 
 	switch(argv[1][0]) {
 		case 'L' :
-			return learn(file);
+			return learn(file, Lexer);
 		case 'C' :
-			return classifier(file);
+			return classifier(file, Lexer);
 		break;
 	}
+
+	delete Lexer;
 
     return 0;
 }
