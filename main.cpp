@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
 "\n"
 "ТИПЫ ЛЕКСЕРОВ: \n"
 "\t stem (по-умолчанию) - выделение слов, стемминг для русского и английского. \n"
-"\t mystem - работа ведется через программу mystem (Яндекс) "
+"\t mystem - работа ведется через программу mystem (Яндекс) (mystem2 - лексемы будут составляться из пар слов, mystem3 - из троек слов) \n"
 "\n\n Логунцов С.В. 2013 г. mailto: loguntsov@gmail.com \n";
 		return 0;
 	}
@@ -191,6 +191,17 @@ int main(int argc, char* argv[]) {
         if (lexer == "mystem") {
             Lexer = new LexerMyStem();
         } else
+        if (lexer == "mystem2") {
+            LexerMyStem *a = new LexerMyStem();
+            a->queue_size = 2;
+            Lexer = a;
+        } else
+        if (lexer == "mystem3") {
+            LexerMyStem *a = new LexerMyStem();
+            a->queue_size = 3;
+            Lexer = a;
+        } else
+
         if (lexer == "stem") {
             Lexer = new LexerStem();
         }

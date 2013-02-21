@@ -12,7 +12,7 @@ using namespace std;
 LexerMyStem::LexerMyStem() {
     UErrorCode status = U_ZERO_ERROR;
     this->matcher = new RegexMatcher("=(.+?)([|]{1}|$)",0, status);
-    this->queue_size = 3;
+    this->queue_size = 1;
 
     this->mystem = new child("./mystem -e utf8 -n -i -l");
 }
