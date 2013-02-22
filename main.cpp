@@ -46,16 +46,18 @@ int learn(string file, lexer * Lexer) {
         if (header.find()) {
             if (words != classifier.end()) {
                 Lexer->parse_end();
-                Lexer->word_stat(words->second);
+                Lexer->word_stat(words->second.words);
             }
         	string str;
         	header.group(1,status).toUTF8String(str);
         	int cl = atoi(str.c_str());
         	if (classifier.find(cl) == classifier.end()) {
-        		WordsStat stat;
+        		ClassifierStat stat;
+        		stat.docs_count = 0;
         		classifier[cl] = stat;
         	}
 			words = classifier.find(cl);
+			words->second.docs_count ++;
 			Lexer->parse_begin();
 			continue;
         }
@@ -64,11 +66,11 @@ int learn(string file, lexer * Lexer) {
 
         ucs.toLower();
         Lexer->parse(ucs);
-        Lexer->word_stat(words->second);
+        Lexer->word_stat(words->second.words);
     }
 
     Lexer->parse_end();
-    Lexer->word_stat(words->second);
+    Lexer->word_stat(words->second.words);
 
 	BayesClassifier bayes;
 	bayes.setStats(classifier);
@@ -76,7 +78,7 @@ int learn(string file, lexer * Lexer) {
 	ofstream ofs(file.c_str());
 	bayes.saveToStream(ofs);
 	ofs.close();
-
+/*
 	for(WordList::const_iterator item = words_all.begin(); item != words_all.end(); item++) {
 		cout << item->first << " " << item->second.word << " " << item->second.counter << endl;
 	}
@@ -86,7 +88,7 @@ int learn(string file, lexer * Lexer) {
 		for(WordsStat::const_iterator stats = classificator->second.begin(); stats != classificator->second.end(); stats++)
 			cout << stats->first << "\t" << stats->second << endl;
 	}
-
+*/
 	return 0;
 }
 
@@ -94,6 +96,12 @@ int classifier(string file, lexer * Lexer) {
 
 	BayesClassifier bayes;
 	ifstream ifs(file.c_str());
+
+	if (!ifs) {
+	    cerr << "Файл не найден: " << file << endl;
+	    exit(1);
+	}
+
 	bayes.loadFromStream(ifs);
 	ifs.close();
 
@@ -110,15 +118,18 @@ int classifier(string file, lexer * Lexer) {
 
 		do {
 			sym = cin.get();
+			if (sym == 0) break;
 			text << sym;
-		} while (sym != 0 && cin.good());
-
+		} while (cin.good());
         Lexer->parse_begin();
 
 		while (!text.eof()) {
 			string buf;
 
 			getline(text, buf);
+
+			//cout << "buf: "<<buf << endl;
+
 			UnicodeString ucs = UnicodeString::fromUTF8(buf);
 
 			ucs.toLower();
@@ -126,6 +137,8 @@ int classifier(string file, lexer * Lexer) {
 			Lexer->parse(ucs);
             Lexer->word_stat(words);
         }
+
+
 
         Lexer->parse_end();
         Lexer->word_stat(words);
@@ -162,11 +175,17 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
+    char *path = new char[strlen(argv[0])];
+    strcpy(path, argv[0]);
+
+    *(strrchr(path, '/') + 1) = 0; // Убираем имя программы
+    string program_path = path;
+    delete [] path;
 
 	if (argc < 3) {
 		cout <<
-"Классификатор текста на основе классификатора Байеса (ver 0.03) \n"
-"bayes [режим_работы] [имя_файла_конфигурации] [тип_лексера] \n"
+"Классификатор текста на основе классификатора Байеса (ver 0.04) \n"
+"bayes [режим_работы] [имя_файла_конфигурации] [тип_лексера] [фильтр_лексем для лексера (mystem) ]\n"
 "РЕЖИМЫ РАБОТЫ: \n"
 " - L - обучение (после обучения данные будут записаны в файл конфигурации) \n"
 "\t На stdin подается набор (много штук) -----CLASSIFICATOR {uint_классификатора} --------\\n + \n"
@@ -182,22 +201,28 @@ int main(int argc, char* argv[]) {
 	}
 
 	string file(argv[2]);
+
+
 	string mode(argv[1]);
 
     lexer * Lexer = NULL;
 
 	if (argc > 3) {
+        string match = "";
+        if (argc > 4) match = argv[4];
+
         string lexer(argv[3]);
+
         if (lexer == "mystem") {
-            Lexer = new LexerMyStem();
+            Lexer = new LexerMyStem(program_path, match);
         } else
         if (lexer == "mystem2") {
-            LexerMyStem *a = new LexerMyStem();
+            LexerMyStem *a = new LexerMyStem(program_path, match);
             a->queue_size = 2;
             Lexer = a;
         } else
         if (lexer == "mystem3") {
-            LexerMyStem *a = new LexerMyStem();
+            LexerMyStem *a = new LexerMyStem(program_path, match);
             a->queue_size = 3;
             Lexer = a;
         } else
@@ -214,7 +239,6 @@ int main(int argc, char* argv[]) {
     if (Lexer == NULL) {
         Lexer = new LexerStem();
     }
-
 
 	switch(argv[1][0]) {
 		case 'L' :

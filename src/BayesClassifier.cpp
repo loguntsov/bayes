@@ -17,7 +17,7 @@ void BayesClassifier::setStats(ClassifierList list) {
 	WordsStat all;
 	for(ClassifierList::const_iterator item = list.begin(); item != list.end(); item++) {
 		WordsStat::iterator it_all;
-		for(WordsStat::const_iterator el = item->second.begin(); el != item->second.end(); el++) {
+		for(WordsStat::const_iterator el = item->second.words.begin(); el != item->second.words.end(); el++) {
 			it_all = all.find(el->first);
 			if (it_all == all.end()) {
 				all[el->first]=1;
@@ -41,10 +41,10 @@ void BayesClassifier::setStats(ClassifierList list, WordsStat all) {
 
 	for(ClassifierList::const_iterator category = list.begin(); category != list.end(); category++) {
 	    unsigned int catTotal = 0;
-		for(WordsStat::const_iterator p = category->second.begin(); p != category->second.end(); p++) {
+		for(WordsStat::const_iterator p = category->second.words.begin(); p != category->second.words.end(); p++) {
 			catTotal += p->second;
 		}
-		for(WordsStat::const_iterator p = category->second.begin(); p != category->second.end(); p++) {
+		for(WordsStat::const_iterator p = category->second.words.begin(); p != category->second.words.end(); p++) {
 			categoryP[category->first][p->first] = log((float) (p->second+1 ) / (catTotal + wordsCount ));
 		}
 		this->pNoWordFound[category->first] = log(1.0 / (catTotal + wordsCount));

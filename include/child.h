@@ -7,7 +7,7 @@
 class child
 {
     public:
-        child(const char *exec);
+        child(const char * exec);
         virtual ~child();
         std::stringstream * get();
         void set(std::string text);

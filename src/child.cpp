@@ -13,7 +13,12 @@
 
 using namespace std;
 
-child::child(const char *exec) {
+child::child(const char* exec) {
+
+    this->stream = NULL;
+    this->pid = 0;
+
+
 
     int outfd[2];
     int infd[2];
@@ -34,9 +39,6 @@ child::child(const char *exec) {
     dup2(outfd[0], STDIN_FILENO); // Make the read end of outfd pipe as stdin
     dup2(infd[1], STDOUT_FILENO); // Make the write end of infd as stdout
 
-    this->stream = NULL;
-    this->pid = 0;
-
     pid_t pid = fork();
     if(!pid) {
 
@@ -52,7 +54,6 @@ child::child(const char *exec) {
         close(STDIN_FILENO);
         close(STDOUT_FILENO); // Restore the original std fds of parent
 
-
         dup2(oldstdin, STDIN_FILENO);
         dup2(oldstdout, STDOUT_FILENO);
 
@@ -63,6 +64,7 @@ child::child(const char *exec) {
         this->outfd = outfd[1];
         this->stream = new stringstream();
         this->pid = pid;
+
     }
 
 }
@@ -88,7 +90,7 @@ stringstream * child::get() {
             if (n==1 && input[0] < 32) break;
             continue;
         }
-        if (step > 100 || is_cr) break;
+        if (step > 1000 || is_cr) break;
         this->pause();
         step ++;
     } while (true);
@@ -98,7 +100,7 @@ stringstream * child::get() {
 void child::set(std::string text) {
     this->stream->str("");
     this->stream->clear();
-    text += "\n";
+    text += '\n';
     const char *str = text.c_str();
     write(this->outfd, str, strlen(str));
     this->pause();
