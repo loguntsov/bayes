@@ -93,20 +93,20 @@ void LexerMyStem::parse_buffer() {
                     this->filter->group(status).toUTF8String(str);
 
                     if (str == "") continue;
-                    cout << str << endl;
+                    //cout << str << endl;
                     list.push_back(str);
                 }
             } else {
                 string str;
                 lexema.toUTF8String(str);
                 if (str == "") continue;
-                cout << str << endl;
+                //cout << str << endl;
                 list.push_back(str);
             }
         }
         if (list.size() > 0) {
             this->queue.push(list);
-            cout << endl;
+            //cout << endl;
         }
     }
     this->generate_lemmas(this->queue_size);
@@ -143,7 +143,7 @@ void LexerMyStem::lemma_mul(lemmas_q &q) {
     }
     for(list <string>::const_iterator i = Result.begin(); i != Result.end(); i++) {
         this->lemmas.push(this->create_lemma(*i,1));
-        cout << "+++" << *i << endl;
+        //cout << "+++" << *i << endl;
     }
-    cout << endl;
+    //cout << endl;
 }
